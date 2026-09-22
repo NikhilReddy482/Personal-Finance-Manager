@@ -126,20 +126,17 @@ export class AuthController {
   static async demoLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
-      const session = await AuthService.createSession(
-        (await AuthService.register('Alex Morgan (Demo)', 'demo@financialflow.io', 'DemoPass@1234').catch(() => {}),
-        (await (await import('../models/User')).User.findOne({ email: 'demo@financialflow.io' }))!._id),
-        clientInfo
-      );
+      const { ensureDemoUserExists } = await import('../services/seed/seedData');
+      const user = await ensureDemoUserExists();
+      const session = await AuthService.createSession(user._id, clientInfo);
 
       res.cookie('session_token', session.token, getCookieOptions());
 
-      const user = await (await import('../models/User')).User.findOne({ email: 'demo@financialflow.io' });
       res.status(200).json({
         success: true,
         data: {
           sessionToken: session.token,
-          user: AuthService.sanitizeUser(user!),
+          user: AuthService.sanitizeUser(user),
         },
       });
     } catch (err) {
