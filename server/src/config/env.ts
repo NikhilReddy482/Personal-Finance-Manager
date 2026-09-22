@@ -15,6 +15,8 @@ const envSchema = z.object({
   EMAIL_USER: z.string().optional().default(process.env.SMTP_USER || process.env.EMAIL_USER || ''),
   EMAIL_PASSWORD: z.string().optional().default(process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD || ''),
   EMAIL_FROM: z.string().default(process.env.SMTP_FROM || process.env.EMAIL_FROM || 'Financial Flow <financialflow.app@gmail.com>'),
+  BREVO_API_KEY: z.string().optional().default(process.env.BREVO_API_KEY || ''),
+  RESEND_API_KEY: z.string().optional().default(process.env.RESEND_API_KEY || ''),
   ML_SERVICE_URL: z.string().default('http://127.0.0.1:8000'),
   GEMINI_API_KEY: z.string().optional().default(''),
   GEMINI_MODEL: z.string().default('gemini-3.6-flash'),

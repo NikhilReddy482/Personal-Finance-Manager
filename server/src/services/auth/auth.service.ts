@@ -80,6 +80,74 @@ export async function sendEmailNotification(
   // Log OTP clearly in server console for auditing and monitoring
   logger.info(`[SECURITY OTP DISPATCH] >>> ${subject} <<< To: ${to}`);
 
+  // 1. Primary Cloud REST API (Brevo HTTPS API - Port 443, never blocked by cloud firewalls)
+  if (env.BREVO_API_KEY) {
+    try {
+      const senderMatch = env.EMAIL_FROM.match(/<([^>]+)>/);
+      const senderEmail = senderMatch ? senderMatch[1] : (env.EMAIL_USER || 'financialflow.app@gmail.com');
+      const senderName = env.EMAIL_FROM.replace(/<[^>]+>/, '').trim() || 'Financial Flow';
+
+      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': env.BREVO_API_KEY,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: to }],
+          subject,
+          htmlContent: html,
+          textContent: text || html.replace(/<[^>]*>?/gm, ' '),
+        }),
+      });
+
+      if (res.ok) {
+        const data: any = await res.json();
+        logger.info(`[BREVO API] Email delivered successfully to ${to}: ${subject} (MessageId: ${data?.messageId})`);
+        return;
+      } else {
+        const errData: any = await res.json().catch(() => ({}));
+        logger.error('[BREVO API] Dispatch error', { status: res.status, error: errData });
+      }
+    } catch (apiErr: any) {
+      logger.error('[BREVO API] Network error', { error: apiErr?.message || apiErr });
+    }
+  }
+
+  // 2. Resend HTTPS API (Port 443)
+  if (env.RESEND_API_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: env.EMAIL_FROM || 'Financial Flow <onboarding@resend.dev>',
+          to: [to],
+          subject,
+          html,
+          text: text || html.replace(/<[^>]*>?/gm, ' '),
+        }),
+      });
+
+      if (res.ok) {
+        const data: any = await res.json();
+        logger.info(`[RESEND API] Email delivered successfully to ${to}: ${subject} (Id: ${data?.id})`);
+        return;
+      } else {
+        const errData: any = await res.json().catch(() => ({}));
+        logger.error('[RESEND API] Dispatch error', { status: res.status, error: errData });
+      }
+    } catch (apiErr: any) {
+      logger.error('[RESEND API] Network error', { error: apiErr?.message || apiErr });
+    }
+  }
+
+  // 3. SMTP Protocol (Nodemailer)
   if (transporter) {
     try {
       const fromAddress = env.EMAIL_FROM || (env.EMAIL_USER ? `"Financial Flow" <${env.EMAIL_USER}>` : '"Financial Flow" <noreply@financialflow.io>');
@@ -102,7 +170,7 @@ export async function sendEmailNotification(
       );
 
       const info: any = await Promise.race([sendPromise, timeoutPromise]);
-      logger.info(`Email sent successfully to ${to}: ${subject} (MessageId: ${info?.messageId})`);
+      logger.info(`Email sent successfully via SMTP to ${to}: ${subject} (MessageId: ${info?.messageId})`);
       return;
     } catch (err: any) {
       logger.error('Notice: SMTP dispatch error or network restriction', { error: err?.message || err });
