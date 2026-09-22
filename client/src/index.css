@@ -1,0 +1,268 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-canvas: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F1F5F9;
+  --bg-inset: #F8FAFC;
+  --bg-sidebar: #FFFFFF;
+  --bg-sidebar-footer: #F1F5F9;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --panel-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --panel-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.dark {
+  --bg-canvas: #080B11;
+  --bg-surface: #0E1424;
+  --bg-surface-hover: #131B30;
+  --bg-inset: #090D17;
+  --bg-sidebar: #0D121F;
+  --bg-sidebar-footer: #0A0E18;
+  --border-color: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --text-primary: #FFFFFF;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --panel-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --panel-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Institutional Fintech Card & Surface Styling */
+.fintech-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--panel-shadow), var(--panel-highlight);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fintech-panel-interactive {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--panel-shadow), var(--panel-highlight);
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fintech-panel-interactive:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.15), var(--panel-highlight);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ========================================================================= */
+/* UNIVERSAL LIGHT MODE ADAPTATION OVERRIDES                                 */
+/* Ensures all pages, tables, inputs, cards, and text adopt Light Mode 100%  */
+/* ========================================================================= */
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html:not(.dark) body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* Background surfaces & Cards */
+html:not(.dark) .bg-slate-900,
+html:not(.dark) .bg-slate-900\/90,
+html:not(.dark) .bg-slate-900\/80,
+html:not(.dark) .bg-slate-900\/70,
+html:not(.dark) .bg-slate-900\/60,
+html:not(.dark) .bg-slate-900\/50,
+html:not(.dark) .bg-slate-900\/40,
+html:not(.dark) .bg-slate-850,
+html:not(.dark) [class*="bg-[#0D121F]"],
+html:not(.dark) [class*="bg-[#0E1424]"],
+html:not(.dark) [class*="bg-[#080B11]"],
+html:not(.dark) [class*="bg-[#141C2E]"],
+html:not(.dark) [class*="bg-[#151E33]"] {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Inset panels, sub-blocks, secondary boxes */
+html:not(.dark) .bg-slate-950,
+html:not(.dark) .bg-slate-950\/90,
+html:not(.dark) .bg-slate-950\/80,
+html:not(.dark) .bg-slate-950\/70,
+html:not(.dark) .bg-slate-950\/60,
+html:not(.dark) .bg-slate-950\/50,
+html:not(.dark) .bg-slate-950\/40,
+html:not(.dark) .bg-slate-800,
+html:not(.dark) .bg-slate-800\/80,
+html:not(.dark) .bg-slate-800\/60,
+html:not(.dark) .bg-slate-800\/40,
+html:not(.dark) [class*="bg-[#090D17]"],
+html:not(.dark) [class*="bg-[#090d16]"],
+html:not(.dark) [class*="bg-[#0A0E18]"],
+html:not(.dark) [class*="bg-[#0B0F19]"],
+html:not(.dark) [class*="bg-[#121929]"] {
+  background-color: #F1F5F9 !important;
+}
+
+/* Gradients on Hero Cards */
+html:not(.dark) [class*="from-slate-900"] {
+  --tw-gradient-from: #FFFFFF !important;
+  --tw-gradient-to: #F1F5F9 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #F8FAFC, var(--tw-gradient-to) !important;
+}
+
+/* Modal Backdrops in Light Mode */
+html:not(.dark) .fixed.inset-0[class*="bg-"] {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Inputs & Form Controls */
+html:not(.dark) input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Table elements */
+html:not(.dark) thead {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) thead th {
+  color: #475569 !important;
+}
+
+html:not(.dark) tbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+
+/* Borders */
+html:not(.dark) .border-slate-800,
+html:not(.dark) .border-slate-800\/90,
+html:not(.dark) .border-slate-800\/80,
+html:not(.dark) .border-slate-800\/60,
+html:not(.dark) .border-slate-800\/40,
+html:not(.dark) .border-slate-700,
+html:not(.dark) .border-slate-700\/80,
+html:not(.dark) .border-slate-700\/60,
+html:not(.dark) [class*="border-white"] {
+  border-color: #E2E8F0 !important;
+}
+
+/* Text Hierarchy */
+html:not(.dark) .text-white {
+  color: #0F172A !important;
+}
+
+html:not(.dark) .text-slate-100,
+html:not(.dark) .text-slate-200 {
+  color: #1E293B !important;
+}
+
+html:not(.dark) .text-slate-300 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #64748B !important;
+}
+
+html:not(.dark) .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+/* Preserve Crisp White Text On Solid Color Buttons, Pills, and Badges */
+html:not(.dark) .bg-blue-600,
+html:not(.dark) .bg-blue-600 *,
+html:not(.dark) .bg-blue-500,
+html:not(.dark) .bg-blue-500 *,
+html:not(.dark) .bg-emerald-600,
+html:not(.dark) .bg-emerald-600 *,
+html:not(.dark) .bg-emerald-500,
+html:not(.dark) .bg-emerald-500 *,
+html:not(.dark) .bg-rose-600,
+html:not(.dark) .bg-rose-600 *,
+html:not(.dark) .bg-rose-500,
+html:not(.dark) .bg-rose-500 *,
+html:not(.dark) .bg-indigo-600,
+html:not(.dark) .bg-indigo-600 *,
+html:not(.dark) .bg-amber-600,
+html:not(.dark) .bg-amber-600 *,
+html:not(.dark) [class*="bg-gradient-to-r"] *,
+html:not(.dark) [class*="bg-gradient-to-tr"] * {
+  color: #FFFFFF !important;
+}
+
+/* Preserve Colored Accent Text */
+html:not(.dark) .text-emerald-400,
+html:not(.dark) .text-emerald-500 {
+  color: #059669 !important;
+}
+
+html:not(.dark) .text-rose-400,
+html:not(.dark) .text-rose-500 {
+  color: #E11D48 !important;
+}
+
+html:not(.dark) .text-amber-400,
+html:not(.dark) .text-amber-500 {
+  color: #D97706 !important;
+}
+
+html:not(.dark) .text-blue-400,
+html:not(.dark) .text-blue-500 {
+  color: #2563EB !important;
+}
+
+html:not(.dark) .text-indigo-400,
+html:not(.dark) .text-indigo-500 {
+  color: #4F46E5 !important;
+}
+
+html:not(.dark) .text-purple-400,
+html:not(.dark) .text-purple-500 {
+  color: #7C3AED !important;
+}
+
+html:not(.dark) .text-cyan-400,
+html:not(.dark) .text-cyan-500 {
+  color: #0891B2 !important;
+}

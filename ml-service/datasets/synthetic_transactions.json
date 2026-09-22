@@ -1,0 +1,320 @@
+[
+  {
+    "description": "SWIGGY BANGALORE ORDER 4821",
+    "category": "Food & Dining",
+    "subcategory": "Food Delivery",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "ZOMATO RESTAURANT DELIVERY",
+    "category": "Food & Dining",
+    "subcategory": "Food Delivery",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "BLINKIT GROCERIES INDIRANAGAR",
+    "category": "Food & Dining",
+    "subcategory": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "DMART SUPERMARKET KORAMANGALA",
+    "category": "Food & Dining",
+    "subcategory": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "STARBUCKS COFFEE CHURCH STREET",
+    "category": "Food & Dining",
+    "subcategory": "Cafes & Bakeries",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "MCDONALDS FAST FOOD FORUM MALL",
+    "category": "Food & Dining",
+    "subcategory": "Restaurants & Dining",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "DOMINOS PIZZA ONLINE",
+    "category": "Food & Dining",
+    "subcategory": "Food Delivery",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "NATURE BASKET GOURMET GROCERY",
+    "category": "Food & Dining",
+    "subcategory": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "UBER TRIP INDIA MUMBAI",
+    "category": "Transportation",
+    "subcategory": "Cabs & Ride Hailing",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "OLA CABS BANGALORE AIRPORT",
+    "category": "Transportation",
+    "subcategory": "Cabs & Ride Hailing",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "INDIAN OIL PETROL PUMP WHITEFIELD",
+    "category": "Transportation",
+    "subcategory": "Fuel",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "HPCL DIESEL REFUEL",
+    "category": "Transportation",
+    "subcategory": "Fuel",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "IRCTC RAILWAY TICKET BOOKING",
+    "category": "Transportation",
+    "subcategory": "Travel Intercity",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "FASTAG TOLL DEBIT NH48",
+    "category": "Transportation",
+    "subcategory": "Tolls & Parking",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "METRO SMART CARD RECHARGE",
+    "category": "Transportation",
+    "subcategory": "Public Transit",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "MONTHLY APARTMENT RENT TRANSFER",
+    "category": "Housing & Rent",
+    "subcategory": "Rent",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "PRESTIGE OASIS HOA MAINTENANCE DUES",
+    "category": "Housing & Rent",
+    "subcategory": "Maintenance & HOA",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "URBAN COMPANY PLUMBING REPAIR",
+    "category": "Housing & Rent",
+    "subcategory": "Repairs & Services",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "IKEA FURNITURE STORE PURCHASE",
+    "category": "Housing & Rent",
+    "subcategory": "Home Improvement",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "BESCOM ELECTRICITY BILL PAYMENT",
+    "category": "Utilities & Bills",
+    "subcategory": "Electricity",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "AIRTEL FIBER BROADBAND BILL",
+    "category": "Utilities & Bills",
+    "subcategory": "Internet & Broadband",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "JIO POSTPAID MOBILE RECHARGE",
+    "category": "Utilities & Bills",
+    "subcategory": "Mobile & Telephone",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "TATA POWER DELHI DISTRIBUTION",
+    "category": "Utilities & Bills",
+    "subcategory": "Electricity",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "INDRAPRASTHA GAS LIMITED PNG BILL",
+    "category": "Utilities & Bills",
+    "subcategory": "Water & Gas",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "NETFLIX ENTERTAINMENT SVCS MONTHLY",
+    "category": "Digital & Subscriptions",
+    "subcategory": "Video Streaming (OTT)",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "SPOTIFY PREMIUM AB SUBSCRIPTION",
+    "category": "Digital & Subscriptions",
+    "subcategory": "Music Streaming",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "GOOGLE ONE 2TB CLOUD STORAGE",
+    "category": "Digital & Subscriptions",
+    "subcategory": "Cloud & Storage",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "OPENAI CHATGPT SUBSCRIPTION",
+    "category": "Digital & Subscriptions",
+    "subcategory": "Software & AI",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "GITHUB COPILOT MONTHLY SEAT",
+    "category": "Digital & Subscriptions",
+    "subcategory": "Software & AI",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "AMAZON INDIA MARKETPLACE ORDER",
+    "category": "Shopping & Retail",
+    "subcategory": "Online Marketplaces",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "FLIPKART INTERNET PVT LTD",
+    "category": "Shopping & Retail",
+    "subcategory": "Online Marketplaces",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "MYNTRA DESIGNS APPAREL CLOTHING",
+    "category": "Shopping & Retail",
+    "subcategory": "Clothing & Apparel",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "CROMA ELECTRONICS GADGET PURCHASE",
+    "category": "Shopping & Retail",
+    "subcategory": "Electronics & Gadgets",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "ZARA RETAIL STORE CLOTHING",
+    "category": "Shopping & Retail",
+    "subcategory": "Clothing & Apparel",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "APOLLO PHARMACY MEDICINES",
+    "category": "Healthcare & Medical",
+    "subcategory": "Pharmacy & Medicines",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "1MG HEALTHCARE ONLINE DRUGS",
+    "category": "Healthcare & Medical",
+    "subcategory": "Pharmacy & Medicines",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "MANIPAL HOSPITAL CONSULTATION",
+    "category": "Healthcare & Medical",
+    "subcategory": "Doctor Consultation",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "LAL PATHLABS BLOOD TEST DIAGNOSTICS",
+    "category": "Healthcare & Medical",
+    "subcategory": "Diagnostics & Labs",
+    "type": "EXPENSE"
+  },
+  {
+    "description": "ZERODHA BROKING EQUITY PURCHASE",
+    "category": "Investments",
+    "subcategory": "Stocks & Equities",
+    "type": "INVESTMENT"
+  },
+  {
+    "description": "GROWW INVESTMENTS MUTUAL FUND SIP",
+    "category": "Investments",
+    "subcategory": "Mutual Funds & SIP",
+    "type": "INVESTMENT"
+  },
+  {
+    "description": "HDFC MUTUAL FUND ACH DEBIT SIP",
+    "category": "Investments",
+    "subcategory": "Mutual Funds & SIP",
+    "type": "INVESTMENT"
+  },
+  {
+    "description": "SBI FIXED DEPOSIT ACCOUNT TRANSFER",
+    "category": "Investments",
+    "subcategory": "Fixed Deposits & PPF",
+    "type": "INVESTMENT"
+  },
+  {
+    "description": "ACME TECHNOLOGIES MONTHLY SALARY CREDIT",
+    "category": "Income",
+    "subcategory": "Salary",
+    "type": "INCOME"
+  },
+  {
+    "description": "INFOSYS PAYROLL DIRECT DEPOSIT",
+    "category": "Income",
+    "subcategory": "Salary",
+    "type": "INCOME"
+  },
+  {
+    "description": "FREELANCE CONSULTING RETAINER UPWORK",
+    "category": "Income",
+    "subcategory": "Freelance & Contracting",
+    "type": "INCOME"
+  },
+  {
+    "description": "TCS DIVIDEND PAYOUT DIRECT CREDIT",
+    "category": "Income",
+    "subcategory": "Investment Returns",
+    "type": "INCOME"
+  },
+  {
+    "description": "HDFC BANK HOME LOAN EMI DEBIT",
+    "category": "Loans & Debt",
+    "subcategory": "Home Loan EMI",
+    "type": "DEBT_PAYMENT"
+  },
+  {
+    "description": "ICICI CREDIT CARD AUTO DEBIT BILL PAYMENT",
+    "category": "Loans & Debt",
+    "subcategory": "Credit Card Payment",
+    "type": "DEBT_PAYMENT"
+  },
+  {
+    "description": "BAJAJ FINANCE CONSUMER LOAN EMI",
+    "category": "Loans & Debt",
+    "subcategory": "Personal Loan & BNPL",
+    "type": "DEBT_PAYMENT"
+  },
+  {
+    "description": "HDFC ATM CASH WITHDRAWAL KORAMANGALA",
+    "category": "Cash & ATM",
+    "subcategory": "Cash Withdrawal",
+    "type": "CASH_WITHDRAWAL"
+  },
+  {
+    "description": "SBI ATM CASH WDL SOUTH EXT",
+    "category": "Cash & ATM",
+    "subcategory": "Cash Withdrawal",
+    "type": "CASH_WITHDRAWAL"
+  },
+  {
+    "description": "HDFC SMS ALERT QUARTERLY CHARGES",
+    "category": "Bank Charges & Taxes",
+    "subcategory": "Bank Charges",
+    "type": "FEE"
+  },
+  {
+    "description": "ANNUAL DEBIT CARD MAINTENANCE FEE",
+    "category": "Bank Charges & Taxes",
+    "subcategory": "Bank Charges",
+    "type": "FEE"
+  }
+]
