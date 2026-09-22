@@ -34,9 +34,56 @@ import {
 
 import { generateOtpEmailHtml } from './emailTemplates';
 
+export function extractClientHostAndOrigin(req: any) {
+  const bodyRpID = req.body?.rpID;
+  const bodyOrigin = req.body?.origin;
+  if (bodyRpID && bodyOrigin && bodyRpID !== 'localhost') {
+    return { rpID: bodyRpID, origin: bodyOrigin };
+  }
+
+  let origin = (req.headers?.origin as string) || bodyOrigin || '';
+  let hostname = bodyRpID || '';
+
+  if ((!hostname || hostname === 'localhost') && origin) {
+    try {
+      hostname = new URL(origin).hostname;
+    } catch (_) {}
+  }
+
+  if ((!hostname || hostname === 'localhost') && req.headers?.referer) {
+    try {
+      const refUrl = new URL(req.headers.referer as string);
+      hostname = refUrl.hostname;
+      if (!origin) origin = refUrl.origin;
+    } catch (_) {}
+  }
+
+  if (!hostname || hostname === 'localhost') {
+    const fwdHost = (req.headers?.['x-forwarded-host'] || req.headers?.host || req.hostname || '') as string;
+    const cleanFwd = fwdHost.split(':')[0];
+    if (cleanFwd && cleanFwd !== 'localhost' && cleanFwd !== '127.0.0.1') {
+      hostname = cleanFwd;
+    }
+  }
+
+  if (!origin && hostname) {
+    const proto = (req.headers?.['x-forwarded-proto'] || req.protocol || 'https') as string;
+    origin = `${proto}://${hostname}`;
+  }
+
+  if ((!hostname || hostname === 'localhost') && env.CLIENT_URL) {
+    try {
+      hostname = new URL(env.CLIENT_URL).hostname;
+      if (!origin) origin = env.CLIENT_URL;
+    } catch (_) {}
+  }
+
+  return { rpID: hostname || 'localhost', origin: origin || 'http://localhost:5173' };
+}
+
 export function resolveRPOptions(relyingParty?: { rpID?: string; origin?: string }) {
   let currentRpID = relyingParty?.rpID;
-  if (!currentRpID && env.CLIENT_URL) {
+  if ((!currentRpID || currentRpID === 'localhost') && env.CLIENT_URL) {
     try {
       currentRpID = new URL(env.CLIENT_URL).hostname;
     } catch (_) {}

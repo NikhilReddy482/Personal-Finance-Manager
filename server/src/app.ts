@@ -55,13 +55,24 @@ const clientDist = possibleDistPaths.find((p) => fs.existsSync(p) && fs.existsSy
 
 if (clientDist) {
   console.log(`✅ Serving fullstack static React client from: ${clientDist}`);
-  app.use(express.static(clientDist));
+  app.use(
+    express.static(clientDist, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        } else {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      },
+    })
+  );
 
   // SPA fallback for all non-API routes
   app.get('*', (req: Request, res: Response, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
       return next();
     }
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 } else {
