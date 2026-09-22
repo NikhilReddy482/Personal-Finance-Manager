@@ -38,7 +38,7 @@ const rpName = 'Financial Flow';
 const rpID = 'localhost';
 const expectedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5000', env.CLIENT_URL].filter(Boolean) as string[];
 
-// Setup email transport abstraction with tight connection timeouts to prevent hanging on cloud hosts
+// Setup email transport abstraction
 let transporter: nodemailer.Transporter | null = null;
 if (env.EMAIL_USER && env.EMAIL_PASSWORD) {
   if (env.EMAIL_HOST && env.EMAIL_HOST.toLowerCase().includes('gmail')) {
@@ -48,9 +48,9 @@ if (env.EMAIL_USER && env.EMAIL_PASSWORD) {
         user: env.EMAIL_USER,
         pass: env.EMAIL_PASSWORD,
       },
-      connectionTimeout: 3500,
-      greetingTimeout: 3500,
-      socketTimeout: 3500,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   } else if (env.EMAIL_HOST) {
     transporter = nodemailer.createTransport({
@@ -61,9 +61,12 @@ if (env.EMAIL_USER && env.EMAIL_PASSWORD) {
         user: env.EMAIL_USER,
         pass: env.EMAIL_PASSWORD,
       },
-      connectionTimeout: 3500,
-      greetingTimeout: 3500,
-      socketTimeout: 3500,
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   }
 }
@@ -74,12 +77,12 @@ export async function sendEmailNotification(
   html: string,
   text?: string
 ): Promise<void> {
-  // Always log OTP clearly in server console
+  // Log OTP clearly in server console for auditing and monitoring
   logger.info(`[SECURITY OTP DISPATCH] >>> ${subject} <<< To: ${to}`);
 
   if (transporter) {
     try {
-      const fromAddress = env.EMAIL_USER ? `"Financial Flow" <${env.EMAIL_USER}>` : env.EMAIL_FROM;
+      const fromAddress = env.EMAIL_FROM || (env.EMAIL_USER ? `"Financial Flow" <${env.EMAIL_USER}>` : '"Financial Flow" <noreply@financialflow.io>');
       
       const sendPromise = transporter.sendMail({
         from: fromAddress,
@@ -95,14 +98,14 @@ export async function sendEmailNotification(
       });
 
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('SMTP connection timed out')), 3500)
+        setTimeout(() => reject(new Error('SMTP connection timed out')), 10000)
       );
 
       const info: any = await Promise.race([sendPromise, timeoutPromise]);
       logger.info(`Email sent successfully to ${to}: ${subject} (MessageId: ${info?.messageId})`);
       return;
     } catch (err: any) {
-      logger.error('Notice: SMTP dispatch timed out or network blocked port, OTP logged to console', { error: err?.message || err });
+      logger.error('Notice: SMTP dispatch error or network restriction', { error: err?.message || err });
     }
   }
 }
@@ -189,9 +192,8 @@ export class AuthService {
     }
 
     const inputHash = hashToken(cleanOtp);
-    const isMasterFallback = cleanOtp === '123456';
 
-    if (record.otpHash !== inputHash && !isMasterFallback) {
+    if (record.otpHash !== inputHash) {
       record.attempts += 1;
       await record.save();
       throw { status: 400, code: 'INVALID_OTP', message: 'Invalid verification code.' };
@@ -349,7 +351,7 @@ export class AuthService {
       await user.save();
     } else {
       // Email OTP: Verify against database record
-      const isDemoAccount = (cleanEmail === 'demo@financialflow.io' || cleanCode === '123456');
+      const isDemoAccount = (cleanEmail === 'demo@financialflow.io');
       if (!isDemoAccount) {
         const record = await OtpVerification.findOne({ email: cleanEmail, purpose: 'LOGIN' });
         if (!record || record.expiresAt < new Date()) {
@@ -734,7 +736,7 @@ export class AuthService {
     }
 
     const inputHash = hashToken(otp);
-    if (record.otpHash !== inputHash && otp.trim() !== '123456') {
+    if (record.otpHash !== inputHash) {
       record.attempts += 1;
       await record.save();
       throw { status: 400, code: 'INVALID_OTP', message: 'Invalid verification code.' };

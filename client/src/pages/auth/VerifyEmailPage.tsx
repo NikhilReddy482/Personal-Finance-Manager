@@ -226,7 +226,7 @@ export const VerifyEmailPage: React.FC = () => {
 
         <div className="mt-4 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
-          <span>Check your email inbox or Render logs for your live code.</span>
+          <span>A 6-digit verification code has been dispatched to your email inbox.</span>
         </div>
 
         {method === 'EMAIL' && (
