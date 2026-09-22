@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "build": "npm --prefix ../client install && npm --prefix ../client run build && tsc && node -e \"const fs=require('fs'),path=require('path');const src=path.resolve('../client/dist'),dest=path.resolve('./dist/public');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.cpSync(src,dest,{recursive:true});console.log('✅ Bundled React client into dist/public');}\"",
     "start": "node dist/server.js",
     "test": "vitest run"
   },
@@ -29,7 +29,6 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
-    "financial-flow-platform": "file:..",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb-memory-server": "^10.1.3",

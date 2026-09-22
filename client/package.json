@@ -14,6 +14,7 @@
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "financial-flow-platform": "file:..",
+    "financial-flow-server": "file:../server",
     "lucide-react": "^0.473.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

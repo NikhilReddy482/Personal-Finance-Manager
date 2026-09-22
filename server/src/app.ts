@@ -42,20 +42,22 @@ app.get('/health', (req: Request, res: Response) => {
 // Main API V1 routes
 app.use('/api/v1', apiRouter);
 
-// Resolve and serve React Client in fullstack production mode
+// Resolve and serve React Client in fullstack mode
 const possibleDistPaths = [
+  path.join(__dirname, 'public'),
   path.resolve(__dirname, '../../client/dist'),
-  path.resolve(process.cwd(), 'client/dist'),
+  path.resolve(process.cwd(), 'dist/public'),
   path.resolve(process.cwd(), '../client/dist'),
-  path.resolve(__dirname, '../public'),
+  path.resolve(process.cwd(), 'client/dist'),
 ];
 
 const clientDist = possibleDistPaths.find((p) => fs.existsSync(p) && fs.existsSync(path.join(p, 'index.html')));
 
 if (clientDist) {
-  console.log(`Serving static client assets from: ${clientDist}`);
+  console.log(`✅ Serving fullstack static React client from: ${clientDist}`);
   app.use(express.static(clientDist));
 
+  // SPA fallback for all non-API routes
   app.get('*', (req: Request, res: Response, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
       return next();
@@ -63,7 +65,7 @@ if (clientDist) {
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 } else {
-  // Fallback API welcome route on root
+  console.warn('⚠️ No client build directory detected, falling back to API welcome response.');
   app.get('/', (req: Request, res: Response) => {
     res.status(200).json({
       service: 'Financial Flow API & Intelligence Engine',
