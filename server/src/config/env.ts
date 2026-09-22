@@ -14,7 +14,7 @@ const envSchema = z.object({
   EMAIL_PORT: z.coerce.number().default(Number(process.env.SMTP_PORT || process.env.EMAIL_PORT) || 587),
   EMAIL_USER: z.string().optional().default(process.env.SMTP_USER || process.env.EMAIL_USER || ''),
   EMAIL_PASSWORD: z.string().optional().default(process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD || ''),
-  EMAIL_FROM: z.string().default(process.env.SMTP_FROM || process.env.EMAIL_FROM || 'Financial Flow <financialflow.app@gmail.com>'),
+  EMAIL_FROM: z.string().default(process.env.SMTP_FROM || process.env.EMAIL_FROM || 'Financial Flow <nikhilreddygurrala2@gmail.com>'),
   BREVO_API_KEY: z.string().optional().default(process.env.BREVO_API_KEY || ''),
   RESEND_API_KEY: z.string().optional().default(process.env.RESEND_API_KEY || ''),
   ML_SERVICE_URL: z.string().default('http://127.0.0.1:8000'),

@@ -164,7 +164,10 @@ export async function sendEmailNotification(
   // 3. SMTP Protocol (Nodemailer)
   if (transporter) {
     try {
-      const fromAddress = env.EMAIL_FROM || (env.EMAIL_USER ? `"Financial Flow" <${env.EMAIL_USER}>` : '"Financial Flow" <noreply@financialflow.io>');
+      let fromAddress = env.EMAIL_FROM || (env.EMAIL_USER ? `"Financial Flow" <${env.EMAIL_USER}>` : '"Financial Flow" <nikhilreddygurrala2@gmail.com>');
+      if (fromAddress.includes('financialflow.app@gmail.com')) {
+        fromAddress = fromAddress.replace('financialflow.app@gmail.com', 'nikhilreddygurrala2@gmail.com');
+      }
       
       const sendPromise = transporter.sendMail({
         from: fromAddress,
