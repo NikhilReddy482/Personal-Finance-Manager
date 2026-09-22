@@ -3,6 +3,16 @@ import { AuthService } from '../services/auth/auth.service';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { Session } from '../models/Session';
 
+const getCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  };
+};
+
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -20,12 +30,7 @@ export class AuthController {
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
       const result = await AuthService.verifyEmail(email, otp, clientInfo);
 
-      res.cookie('session_token', result.sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie('session_token', result.sessionToken, getCookieOptions());
 
       res.status(200).json({ success: true, data: result });
     } catch (err) {
@@ -51,12 +56,7 @@ export class AuthController {
 
       // If MFA is disabled, sessionToken is generated immediately
       if (result.sessionToken) {
-        res.cookie('session_token', result.sessionToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie('session_token', result.sessionToken, getCookieOptions());
       }
 
       res.status(200).json({ success: true, data: result });
@@ -71,12 +71,7 @@ export class AuthController {
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
       const result = await AuthService.verifyLoginOTP(email, otp, method || 'EMAIL', clientInfo);
 
-      res.cookie('session_token', result.sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie('session_token', result.sessionToken, getCookieOptions());
 
       res.status(200).json({ success: true, data: result });
     } catch (err) {
@@ -114,12 +109,7 @@ export class AuthController {
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
       const result = await AuthService.verifyPasskeyLogin(email, response, clientInfo);
 
-      res.cookie('session_token', result.sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie('session_token', result.sessionToken, getCookieOptions());
 
       res.status(200).json({ success: true, data: result });
     } catch (err) {
@@ -136,12 +126,7 @@ export class AuthController {
         clientInfo
       );
 
-      res.cookie('session_token', session.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie('session_token', session.token, getCookieOptions());
 
       const user = await (await import('../models/User')).User.findOne({ email: 'demo@financialflow.io' });
       res.status(200).json({
@@ -162,7 +147,7 @@ export class AuthController {
       if (authReq.sessionId) {
         await Session.findByIdAndUpdate(authReq.sessionId, { isRevoked: true });
       }
-      res.clearCookie('session_token');
+      res.clearCookie('session_token', getCookieOptions());
       res.status(200).json({ success: true, data: { message: 'Logged out successfully.' } });
     } catch (err) {
       next(err);
