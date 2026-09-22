@@ -16,23 +16,47 @@ export class AnalyticsService {
     };
     if (accountId) match.accountId = new mongoose.Types.ObjectId(accountId);
 
-    const txs = await Transaction.find(match);
+    const [stats] = await Transaction.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: null,
+          totalIncomeMinor: {
+            $sum: { $cond: [{ $eq: ['$transactionType', 'INCOME'] }, '$amountMinor', 0] },
+          },
+          totalExpenseMinor: {
+            $sum: {
+              $cond: [
+                { $in: ['$transactionType', ['EXPENSE', 'FEE']] },
+                '$amountMinor',
+                0,
+              ],
+            },
+          },
+          totalInvestmentsMinor: {
+            $sum: { $cond: [{ $eq: ['$transactionType', 'INVESTMENT'] }, '$amountMinor', 0] },
+          },
+          totalDebtPaymentsMinor: {
+            $sum: { $cond: [{ $eq: ['$transactionType', 'DEBT_PAYMENT'] }, '$amountMinor', 0] },
+          },
+          totalTransfersMinor: {
+            $sum: { $cond: [{ $eq: ['$transactionType', 'TRANSFER'] }, '$amountMinor', 0] },
+          },
+          totalRefundsMinor: {
+            $sum: { $cond: [{ $eq: ['$transactionType', 'REFUND'] }, '$amountMinor', 0] },
+          },
+          transactionCount: { $sum: 1 },
+        },
+      },
+    ]);
 
-    let totalIncomeMinor = 0;
-    let totalExpenseMinor = 0;
-    let totalInvestmentsMinor = 0;
-    let totalDebtPaymentsMinor = 0;
-    let totalTransfersMinor = 0;
-    let totalRefundsMinor = 0;
-
-    for (const t of txs) {
-      if (t.transactionType === 'INCOME') totalIncomeMinor += t.amountMinor;
-      else if (t.transactionType === 'EXPENSE' || t.transactionType === 'FEE') totalExpenseMinor += t.amountMinor;
-      else if (t.transactionType === 'INVESTMENT') totalInvestmentsMinor += t.amountMinor;
-      else if (t.transactionType === 'DEBT_PAYMENT') totalDebtPaymentsMinor += t.amountMinor;
-      else if (t.transactionType === 'TRANSFER') totalTransfersMinor += t.amountMinor;
-      else if (t.transactionType === 'REFUND') totalRefundsMinor += t.amountMinor;
-    }
+    const totalIncomeMinor = stats?.totalIncomeMinor || 0;
+    const totalExpenseMinor = stats?.totalExpenseMinor || 0;
+    const totalInvestmentsMinor = stats?.totalInvestmentsMinor || 0;
+    const totalDebtPaymentsMinor = stats?.totalDebtPaymentsMinor || 0;
+    const totalTransfersMinor = stats?.totalTransfersMinor || 0;
+    const totalRefundsMinor = stats?.totalRefundsMinor || 0;
+    const transactionCount = stats?.transactionCount || 0;
 
     // Net cash flow = Total Income + Refunds - Expenses - Fees - Investments - Debt Payments
     const netCashFlowMinor = totalIncomeMinor + totalRefundsMinor - totalExpenseMinor - totalInvestmentsMinor - totalDebtPaymentsMinor;
@@ -60,7 +84,7 @@ export class AnalyticsService {
       savingsMinor,
       savings: toMajorUnits(savingsMinor),
       savingsRate: Number(savingsRate.toFixed(2)),
-      transactionCount: txs.length,
+      transactionCount,
     };
   }
 

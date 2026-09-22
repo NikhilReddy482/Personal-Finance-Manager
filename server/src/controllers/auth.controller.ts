@@ -96,7 +96,12 @@ export class AuthController {
   static async passkeyLoginOptions(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email } = req.body;
-      const options = await AuthService.generatePasskeyLoginOptions(email);
+      const hostHeader = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost') as string;
+      const rpID = hostHeader.split(':')[0];
+      const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https') as string;
+      const origin = `${proto}://${hostHeader}`;
+
+      const options = await AuthService.generatePasskeyLoginOptions(email, { rpID, origin });
       res.status(200).json({ success: true, data: options });
     } catch (err) {
       next(err);
@@ -107,7 +112,12 @@ export class AuthController {
     try {
       const { email, response } = req.body;
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
-      const result = await AuthService.verifyPasskeyLogin(email, response, clientInfo);
+      const hostHeader = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost') as string;
+      const rpID = hostHeader.split(':')[0];
+      const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https') as string;
+      const origin = `${proto}://${hostHeader}`;
+
+      const result = await AuthService.verifyPasskeyLogin(email, response, clientInfo, { rpID, origin });
 
       res.cookie('session_token', result.sessionToken, getCookieOptions());
 

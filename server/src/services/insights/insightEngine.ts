@@ -96,13 +96,22 @@ export class InsightEngine {
       prevEnd = new Date(Date.UTC(currentYear, currentMonthNum - 1, 0, 23, 59, 59, 999));
     }
 
-    // 3. Compute deterministic aggregates
-    const current = await AnalyticsService.getOverview(userObjectId, currentStart, currentEnd, accountId);
-    const previous = await AnalyticsService.getOverview(userObjectId, prevStart, prevEnd, accountId);
-    const categoryBreakdown = await AnalyticsService.getCategoryBreakdown(userObjectId, currentStart, currentEnd, 'EXPENSE', accountId);
-    const topMerchants = await AnalyticsService.getTopMerchants(userObjectId, currentStart, currentEnd, 5, accountId);
-    const anomalies = await AnomalyService.getAnomalies(userObjectId);
-    const recurring = await RecurringService.getRecurringSummary(userObjectId);
+    // 3. Compute deterministic aggregates concurrently
+    const [
+      current,
+      previous,
+      categoryBreakdown,
+      topMerchants,
+      anomalies,
+      recurring,
+    ] = await Promise.all([
+      AnalyticsService.getOverview(userObjectId, currentStart, currentEnd, accountId),
+      AnalyticsService.getOverview(userObjectId, prevStart, prevEnd, accountId),
+      AnalyticsService.getCategoryBreakdown(userObjectId, currentStart, currentEnd, 'EXPENSE', accountId),
+      AnalyticsService.getTopMerchants(userObjectId, currentStart, currentEnd, 5, accountId),
+      AnomalyService.getAnomalies(userObjectId),
+      RecurringService.getRecurringSummary(userObjectId),
+    ]);
 
     // Delta calculations
     const expenseDiff = current.totalExpense - previous.totalExpense;

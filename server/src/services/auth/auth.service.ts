@@ -34,9 +34,32 @@ import {
 
 import { generateOtpEmailHtml } from './emailTemplates';
 
-const rpName = 'Financial Flow';
-const rpID = 'localhost';
-const expectedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5000', env.CLIENT_URL].filter(Boolean) as string[];
+export function resolveRPOptions(relyingParty?: { rpID?: string; origin?: string }) {
+  let currentRpID = relyingParty?.rpID;
+  if (!currentRpID && env.CLIENT_URL) {
+    try {
+      currentRpID = new URL(env.CLIENT_URL).hostname;
+    } catch (_) {}
+  }
+  if (!currentRpID) currentRpID = 'localhost';
+
+  const origins = [
+    relyingParty?.origin,
+    `https://${currentRpID}`,
+    `http://${currentRpID}`,
+    'http://localhost:5173',
+    'http://localhost:5000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5000',
+    env.CLIENT_URL,
+  ].filter(Boolean) as string[];
+
+  return {
+    rpName: 'Financial Flow',
+    rpID: currentRpID,
+    expectedOrigins: Array.from(new Set(origins)),
+  };
+}
 
 // Setup email transport abstraction
 let transporter: nodemailer.Transporter | null = null;
@@ -475,10 +498,14 @@ export class AuthService {
   }
 
   // --- Passkey / WebAuthn Implementation ---
-  static async generatePasskeyRegisterOptions(userId: mongoose.Types.ObjectId): Promise<any> {
+  static async generatePasskeyRegisterOptions(
+    userId: mongoose.Types.ObjectId,
+    rp?: { rpID?: string; origin?: string }
+  ): Promise<any> {
     const user = await User.findById(userId);
     if (!user) throw { status: 404, message: 'User not found' };
 
+    const { rpName, rpID } = resolveRPOptions(rp);
     const userPasskeys = user.passkeys || [];
     const options = await generateRegistrationOptions({
       rpName,
@@ -506,13 +533,15 @@ export class AuthService {
   static async verifyPasskeyRegister(
     userId: mongoose.Types.ObjectId,
     response: any,
-    deviceName?: string
+    deviceName?: string,
+    rp?: { rpID?: string; origin?: string }
   ): Promise<{ passkeys: IPasskey[] }> {
     const user = await User.findById(userId);
     if (!user || !user.currentChallenge) {
       throw { status: 400, code: 'INVALID_CHALLENGE', message: 'Registration challenge expired. Please retry.' };
     }
 
+    const { rpID, expectedOrigins } = resolveRPOptions(rp);
     const verification = await verifyRegistrationResponse({
       response,
       expectedChallenge: user.currentChallenge,
@@ -554,7 +583,10 @@ export class AuthService {
     return Boolean(user && Array.isArray(user.passkeys) && user.passkeys.length > 0);
   }
 
-  static async generatePasskeyLoginOptions(email?: string): Promise<any> {
+  static async generatePasskeyLoginOptions(
+    email?: string,
+    rp?: { rpID?: string; origin?: string }
+  ): Promise<any> {
     let allowCredentials: any[] = [];
     let user: any = null;
 
@@ -568,6 +600,7 @@ export class AuthService {
       }
     }
 
+    const { rpID } = resolveRPOptions(rp);
     const options = await generateAuthenticationOptions({
       rpID,
       userVerification: 'preferred',
@@ -585,7 +618,8 @@ export class AuthService {
   static async verifyPasskeyLogin(
     email: string | undefined,
     response: any,
-    clientInfo?: { ip?: string; ua?: string }
+    clientInfo?: { ip?: string; ua?: string },
+    rp?: { rpID?: string; origin?: string }
   ): Promise<{ sessionToken: string; user: any }> {
     const credentialId = response.id;
     let user = null;
@@ -606,6 +640,7 @@ export class AuthService {
       throw { status: 400, code: 'PASSKEY_NOT_REGISTERED', message: 'Passkey is not registered with this account.' };
     }
 
+    const { rpID, expectedOrigins } = resolveRPOptions(rp);
     const expectedChallenge = user.currentChallenge;
     const verification = await verifyAuthenticationResponse({
       response,
