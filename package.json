@@ -1,0 +1,12 @@
+{
+  "name": "financial-flow-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Financial Flow AI-Powered Personal Finance Intelligence Platform",
+  "scripts": {
+    "build": "npm --prefix server install && npm --prefix server run build",
+    "start": "npm --prefix server start",
+    "build:client": "npm --prefix client install && npm --prefix client run build",
+    "build:server": "npm --prefix server install && npm --prefix server run build"
+  }
+}
