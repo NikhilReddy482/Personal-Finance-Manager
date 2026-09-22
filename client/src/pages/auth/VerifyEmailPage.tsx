@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle2, RefreshCw, Mail, Smartphone, KeyRound } from 'lucide-react';
+import { CheckCircle2, RefreshCw, Mail, Smartphone, KeyRound, Sparkles } from 'lucide-react';
 
 export const VerifyEmailPage: React.FC = () => {
   const location = useLocation();
@@ -68,7 +68,7 @@ export const VerifyEmailPage: React.FC = () => {
     try {
       await api.post('/auth/resend-verification', { email, purpose });
       setMessage('A fresh verification code has been dispatched to your email.');
-      setCooldown(60);
+      setCooldown(30);
     } catch (err: any) {
       setError(err.message || 'Failed to resend code');
     } finally {
@@ -224,8 +224,13 @@ export const VerifyEmailPage: React.FC = () => {
           </button>
         </form>
 
+        <div className="mt-4 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+          <span>Check your email inbox or Render logs for your live code.</span>
+        </div>
+
         {method === 'EMAIL' && (
-          <div className="mt-6 flex items-center justify-center gap-2">
+          <div className="mt-4 flex items-center justify-center gap-2">
             <button
               type="button"
               disabled={resending || cooldown > 0}
