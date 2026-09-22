@@ -83,9 +83,23 @@ export async function sendEmailNotification(
   // 1. Primary Cloud REST API (Brevo HTTPS API - Port 443, never blocked by cloud firewalls)
   if (env.BREVO_API_KEY) {
     try {
-      const senderMatch = env.EMAIL_FROM.match(/<([^>]+)>/);
-      const senderEmail = senderMatch ? senderMatch[1] : (env.EMAIL_USER || 'financialflow.app@gmail.com');
-      const senderName = env.EMAIL_FROM.replace(/<[^>]+>/, '').trim() || 'Financial Flow';
+      // Auto-detect verified sender from Brevo to prevent sender validation rejections
+      let senderEmail = 'nikhilreddygurrala2@gmail.com';
+      let senderName = 'Financial Flow';
+
+      try {
+        const sendersRes = await fetch('https://api.brevo.com/v3/senders', {
+          headers: { 'accept': 'application/json', 'api-key': env.BREVO_API_KEY },
+        });
+        if (sendersRes.ok) {
+          const sendersData: any = await sendersRes.json();
+          const active = sendersData.senders?.find((s: any) => s.active);
+          if (active && active.email) {
+            senderEmail = active.email;
+            senderName = active.name || 'Financial Flow';
+          }
+        }
+      } catch (_) {}
 
       const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
@@ -105,7 +119,7 @@ export async function sendEmailNotification(
 
       if (res.ok) {
         const data: any = await res.json();
-        logger.info(`[BREVO API] Email delivered successfully to ${to}: ${subject} (MessageId: ${data?.messageId})`);
+        logger.info(`[BREVO API] Email delivered successfully from ${senderEmail} to ${to}: ${subject} (MessageId: ${data?.messageId})`);
         return;
       } else {
         const errData: any = await res.json().catch(() => ({}));
