@@ -95,11 +95,11 @@ export class AuthController {
 
   static async passkeyLoginOptions(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email } = req.body;
+      const { email, rpID: clientRpID, origin: clientOrigin } = req.body;
       const hostHeader = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost') as string;
-      const rpID = hostHeader.split(':')[0];
+      const rpID = clientRpID || hostHeader.split(':')[0];
       const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https') as string;
-      const origin = `${proto}://${hostHeader}`;
+      const origin = clientOrigin || `${proto}://${hostHeader}`;
 
       const options = await AuthService.generatePasskeyLoginOptions(email, { rpID, origin });
       res.status(200).json({ success: true, data: options });
@@ -110,12 +110,12 @@ export class AuthController {
 
   static async passkeyLoginVerify(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, response } = req.body;
+      const { email, response, rpID: clientRpID, origin: clientOrigin } = req.body;
       const clientInfo = { ip: req.ip, ua: req.headers['user-agent'] };
       const hostHeader = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost') as string;
-      const rpID = hostHeader.split(':')[0];
+      const rpID = clientRpID || hostHeader.split(':')[0];
       const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https') as string;
-      const origin = `${proto}://${hostHeader}`;
+      const origin = clientOrigin || `${proto}://${hostHeader}`;
 
       const result = await AuthService.verifyPasskeyLogin(email, response, clientInfo, { rpID, origin });
 

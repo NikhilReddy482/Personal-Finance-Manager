@@ -192,8 +192,11 @@ export const SecuritySettingsPage: React.FC = () => {
     setRegisteringPasskey(true);
 
     try {
-      // 1. Get registration options from server
-      const optionsRes: any = await api.post('/security/passkeys/register-options');
+      // 1. Get registration options from server with client hostname & origin
+      const optionsRes: any = await api.post('/security/passkeys/register-options', {
+        rpID: window.location.hostname,
+        origin: window.location.origin,
+      });
       if (!optionsRes.success || !optionsRes.data) {
         throw new Error('Failed to get passkey registration challenge');
       }
@@ -205,6 +208,8 @@ export const SecuritySettingsPage: React.FC = () => {
       const verifyRes: any = await api.post('/security/passkeys/register-verify', {
         response: regResp,
         deviceName: passkeyNickname.trim() || 'Biometric Authenticator',
+        rpID: window.location.hostname,
+        origin: window.location.origin,
       });
 
       if (verifyRes.success) {

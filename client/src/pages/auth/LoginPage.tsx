@@ -92,7 +92,11 @@ export const LoginPage: React.FC = () => {
     try {
       const cleanEmail = email.trim() || undefined;
       // 1. Get Authentication Options from server
-      const optionsRes: any = await api.post('/auth/passkeys/login-options', { email: cleanEmail });
+      const optionsRes: any = await api.post('/auth/passkeys/login-options', {
+        email: cleanEmail,
+        rpID: window.location.hostname,
+        origin: window.location.origin,
+      });
       if (!optionsRes.success || !optionsRes.data) {
         throw new Error('Failed to obtain passkey challenge from server');
       }
@@ -104,6 +108,8 @@ export const LoginPage: React.FC = () => {
       const verifyRes: any = await api.post('/auth/passkeys/login-verify', {
         email: cleanEmail,
         response: authResp,
+        rpID: window.location.hostname,
+        origin: window.location.origin,
       });
 
       if (verifyRes.success) {
