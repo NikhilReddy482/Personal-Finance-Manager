@@ -628,53 +628,45 @@ export const DashboardPage: React.FC = () => {
                   />
                 </svg>
                 <div className="absolute bottom-1 text-center">
-                  <div className="text-lg font-bold text-white tabular-nums">18</div>
-                  <div className="text-[9px] font-semibold text-emerald-400 uppercase tracking-wider">Low Risk</div>
+                  <div className="text-lg font-bold text-white tabular-nums">
+                    {anomalies.length > 0 ? Math.min(100, anomalies.length * 15) : 0}
+                  </div>
+                  <div className={`text-[9px] font-semibold uppercase tracking-wider ${anomalies.length === 0 ? 'text-emerald-400' : anomalies.length < 3 ? 'text-amber-400' : 'text-rose-400'}`}>
+                    {anomalies.length === 0 ? 'Optimal' : anomalies.length < 3 ? 'Low Risk' : 'High Risk'}
+                  </div>
                 </div>
               </div>
-              <div className="text-xs font-semibold text-slate-300 mt-2">Optimal Health Score</div>
+              <div className="text-xs font-semibold text-slate-300 mt-2">
+                {anomalies.length === 0 ? 'Zero Risk Detected' : `${anomalies.length} Flagged Outlier${anomalies.length > 1 ? 's' : ''}`}
+              </div>
             </div>
 
             {/* Alerts List */}
             <div className="sm:col-span-7 space-y-2">
-              <div className="p-2.5 rounded-xl bg-[#090D17] border border-white/[0.06] flex items-center justify-between text-xs hover:border-white/10 transition">
-                <div className="flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <AlertTriangle className="w-3.5 h-3.5" />
+              {anomalies.length > 0 ? (
+                anomalies.slice(0, 3).map((item, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-[#090D17] border border-white/[0.06] flex items-center justify-between text-xs hover:border-white/10 transition">
+                    <div className="flex items-center gap-2 truncate">
+                      <div className="p-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex-shrink-0">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="truncate">
+                        <div className="font-semibold text-slate-200 truncate">{item.merchant || item.description}</div>
+                        <div className="text-[10px] text-slate-400 truncate">{item.anomalyReason || 'Statistical spike detected'}</div>
+                      </div>
+                    </div>
+                    <span className="font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20 text-[10px] flex-shrink-0">
+                      ₹{(item.amount || 0).toLocaleString('en-IN')}
+                    </span>
                   </div>
-                  <div>
-                    <div className="font-semibold text-slate-200">High Software Spend (AWS)</div>
-                    <div className="text-[10px] text-slate-400">Statistical spike detected</div>
-                  </div>
+                ))
+              ) : (
+                <div className="p-4 rounded-xl bg-[#090D17] border border-white/[0.06] text-center text-xs text-slate-400">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mx-auto mb-1.5" />
+                  <div className="font-semibold text-slate-300">No Anomalies Found</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">All transaction patterns match your baseline.</div>
                 </div>
-                <span className="font-semibold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20 text-[10px]">+24%</span>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-[#090D17] border border-white/[0.06] flex items-center justify-between text-xs hover:border-white/10 transition">
-                <div className="flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    <Activity className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-200">Off-pattern Weekend Dining</div>
-                    <div className="text-[10px] text-slate-400">3 transactions in 2 hours</div>
-                  </div>
-                </div>
-                <span className="font-mono text-slate-300 tabular-nums">₹1,850</span>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-[#090D17] border border-white/[0.06] flex items-center justify-between text-xs hover:border-white/10 transition">
-                <div className="flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-200">Fixed Rent Payout</div>
-                    <div className="text-[10px] text-slate-400">Consistent baseline verified</div>
-                  </div>
-                </div>
-                <span className="font-mono text-emerald-400 font-semibold tabular-nums">₹32,000</span>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -690,7 +682,7 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-base font-bold text-white tracking-tight">Active Subscriptions</h3>
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                Monthly commitment: <strong className="text-white tabular-nums">₹{(recurringSummary.totalMonthlyCommitment || 2450).toLocaleString('en-IN')}</strong>
+                Monthly commitment: <strong className="text-white tabular-nums">₹{(recurringSummary?.totalMonthlyCommitment || 0).toLocaleString('en-IN')}</strong>
               </p>
             </div>
             <Link to="/app/subscriptions" className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1">
@@ -698,63 +690,37 @@ export const DashboardPage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {/* Card 1: Slack */}
-            <div className="bg-[#090D17] border border-white/[0.07] rounded-xl p-3.5 flex flex-col justify-between hover:border-white/15 transition shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs">
-                  <Cpu className="w-3.5 h-3.5" />
+          {recurringSummary?.groups && recurringSummary.groups.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {recurringSummary.groups.slice(0, 4).map((sub: any, idx: number) => (
+                <div key={idx} className="bg-[#090D17] border border-white/[0.07] rounded-xl p-3.5 flex flex-col justify-between hover:border-white/15 transition shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs">
+                      <Zap className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-[9px] font-semibold text-purple-400 uppercase bg-purple-500/10 px-1.5 py-0.5 rounded">
+                      {sub.frequency || 'Monthly'}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-white truncate">{sub.merchant || 'Subscription'}</div>
+                    <div className="text-xs font-bold text-slate-200 mt-1 tabular-nums">
+                      ₹{(sub.expectedAmount || sub.averageAmount || 0).toLocaleString('en-IN')}
+                      <span className="text-[10px] text-slate-500 font-normal">/mo</span>
+                    </div>
+                  </div>
                 </div>
-                <span className="text-[9px] font-semibold text-purple-400 uppercase bg-purple-500/10 px-1.5 py-0.5 rounded">Enterprise</span>
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-white truncate">Slack Workspace</div>
-                <div className="text-xs font-bold text-slate-200 mt-1 tabular-nums">₹450<span className="text-[10px] text-slate-500 font-normal">/mo</span></div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 rounded-xl bg-[#090D17] border border-white/[0.06] text-center text-xs text-slate-400">
+              <Layers className="w-5 h-5 text-purple-400 mx-auto mb-1.5" />
+              <div className="font-semibold text-slate-300">No Subscriptions Detected</div>
+              <div className="text-[11px] text-slate-500 mt-0.5">
+                Upload your bank statement in Import to auto-detect recurring bills.
               </div>
             </div>
-
-            {/* Card 2: AWS */}
-            <div className="bg-[#090D17] border border-white/[0.07] rounded-xl p-3.5 flex flex-col justify-between hover:border-white/15 transition shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
-                  <Cloud className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-[9px] font-semibold text-amber-400 uppercase bg-amber-500/10 px-1.5 py-0.5 rounded">Sep 28</span>
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-white truncate">AWS Cloud</div>
-                <div className="text-xs font-bold text-slate-200 mt-1 tabular-nums">₹1,850<span className="text-[10px] text-slate-500 font-normal">/mo</span></div>
-              </div>
-            </div>
-
-            {/* Card 3: Notion */}
-            <div className="bg-[#090D17] border border-white/[0.07] rounded-xl p-3.5 flex flex-col justify-between hover:border-white/15 transition shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
-                  <Layers className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-[9px] font-semibold text-blue-400 uppercase bg-blue-500/10 px-1.5 py-0.5 rounded">Pro</span>
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-white truncate">Notion Suite</div>
-                <div className="text-xs font-bold text-slate-200 mt-1 tabular-nums">₹120<span className="text-[10px] text-slate-500 font-normal">/mo</span></div>
-              </div>
-            </div>
-
-            {/* Card 4: Zendesk */}
-            <div className="bg-[#090D17] border border-white/[0.07] rounded-xl p-3.5 flex flex-col justify-between hover:border-white/15 transition shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
-                  <CreditCard className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-[9px] font-semibold text-emerald-400 uppercase bg-emerald-500/10 px-1.5 py-0.5 rounded">Growth</span>
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-white truncate">Zendesk / Ops</div>
-                <div className="text-xs font-bold text-slate-200 mt-1 tabular-nums">₹680<span className="text-[10px] text-slate-500 font-normal">/mo</span></div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

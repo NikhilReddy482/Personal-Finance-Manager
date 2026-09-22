@@ -45,11 +45,13 @@ export const VerifyEmailPage: React.FC = () => {
           otp: otp.trim(),
           method,
         });
+        await refreshUser();
+        navigate('/app/dashboard');
       } else {
         await api.post('/auth/verify-email', { email, otp: otp.trim() });
+        await refreshUser();
+        navigate('/app/import');
       }
-      await refreshUser();
-      navigate('/app/dashboard');
     } catch (err: any) {
       setError(err.message || 'Verification failed. Please check the code.');
     } finally {
